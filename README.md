@@ -2,8 +2,7 @@ Janus: Fuzzing File Systems via Two-Dimensional Input Space Exploration
 ===========================================
 
 ### Paper
-* [Fuzzing File Systems via Two-Dimensional Input Space Exploration (IEEE S&P 2019)]
-(https://gts3.org/assets/papers/2019/xu:janus.pdf)
+* [Fuzzing File Systems via Two-Dimensional Input Space Exploration (IEEE S&P 2019)](https://gts3.org/assets/papers/2019/xu:janus.pdf)
 
 ### Usage 
 The currently released version supports fuzzing ext4, btrfs and F2FS. 
