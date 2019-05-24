@@ -88,8 +88,8 @@ We currently release the image parsing support for ext4, btrfs and F2FS. Stay tu
         - Here the starting program folder is just the input directory
 
 ### Contacts
-Wen Xu (wen.xu@gatech.edu)
-Hyungon Moon (hyungon@unist.ac.kr)
-Sanidhya Kashyap (sanidhya@gatech.edu)
-Po-Ning Tseng (poning@gatech.edu)
-Taesoo Kim (taesoo@gatech.edu)
+- Wen Xu (wen.xu@gatech.edu)
+- Hyungon Moon (hyungon@unist.ac.kr)
+- Sanidhya Kashyap (sanidhya@gatech.edu)
+- Po-Ning Tseng (poning@gatech.edu)
+- Taesoo Kim (taesoo@gatech.edu)
