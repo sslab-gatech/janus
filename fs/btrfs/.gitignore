@@ -1,0 +1,7 @@
+*.img
+btrfs-fsfuzz
+*.o
+*.so
+btrfs_standalone
+btrfs_general_standalone
+

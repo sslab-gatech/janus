@@ -1,0 +1,7 @@
+*.img
+f2fs_standalone
+f2fs_general_standalone
+f2fs-fsfuzz
+f2fs-tfuzz
+*.o
+*.so

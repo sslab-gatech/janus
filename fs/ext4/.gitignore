@@ -1,0 +1,7 @@
+*.img
+ext4_standalone
+ext4_general_standalone
+ext4-fsfuzz
+ext4-tfuzz
+*.o
+*.so

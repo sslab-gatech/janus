@@ -1,0 +1,141 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import argparse, errno, os, shutil, subprocess, sys, tempfile, pwd, struct, xattr
+from stat import *
+import pathlib2
+p8 = lambda x : struct.pack('<B', x)
+p32 = lambda x : struct.pack('<I', x)
+p64 = lambda x : struct.pack('<Q', x)
+
+FILE 	= 0x01
+DIR 	= 0x02
+SYMLINK = 0x03
+FIFO	= 0x04
+
+def mount(fstype, path, mntpoint, options=[]):
+    if fstype == 'gfs2':
+        options += ['acl']
+    elif fstype == 'reiserfs':
+        options += ['acl', 'user_xattr']
+    print(['sudo', 'mount', '-o', ','.join(['loop'] + options), '-t', fstype, path, mntpoint])
+    subprocess.check_call(
+            ['sudo', 'mount', '-o', ','.join(['loop'] + options), '-t', fstype, path, mntpoint])
+
+def chown(mntpoint):
+    try:
+        subprocess.check_call(['sudo', 'chown', '%s.%s' % (os.getuid(), os.getgid()), '-R', mntpoint])
+    except:
+        pass
+
+def umount(mntpoint):
+    subprocess.check_call(['sudo', 'umount', mntpoint])
+
+def xattrs(x):
+    ret = []
+    f = pathlib2.Path(x)
+    print(x + ", " + str(f.exists()))
+    if f.exists():
+        try:
+            output = subprocess.check_output(['getfattr', '--absolute-names', '-d', '-m', '-', x])
+            for xattr in output.split('\n'):
+                index = xattr.find('=')
+                if index != -1:
+                    xattr_name = xattr[:index]
+                    xattr_value = xattr[index + 1:]
+                    ret.append([xattr_name, xattr_value])
+        except:
+            pass
+    return ret
+
+def stat(mntpoint, stat_file):
+
+    result = []
+
+    print(mntpoint)
+    for dirpath, _, files in os.walk(mntpoint):
+
+        # put dir
+        if dirpath == mntpoint:
+            real_dirpath = '.'
+        else:
+            real_dirpath = dirpath[dirpath.find(mntpoint) + len(mntpoint) + 1:]
+        print(real_dirpath)
+        result.append([real_dirpath, DIR, xattrs(dirpath)])
+        
+        # put file objects
+        for f in files:
+            real_filepath = os.path.join(real_dirpath, f)
+            # print real_filepath
+            
+            mode = os.lstat(os.path.join(mntpoint, real_filepath)).st_mode 
+            _type = None
+
+            if S_ISLNK(mode):
+                _type = SYMLINK
+            elif S_ISFIFO(mode):
+                _type = FIFO
+            else:
+                _type = FILE
+
+            result.append([real_filepath, _type, xattrs(os.path.join(mntpoint, real_filepath))])
+        
+    print result
+
+    f = open(stat_file, 'wb')
+
+    # file obj num
+    f.write(p32(len(result)))
+
+    for fobj in result:
+        real_filepath = fobj[0]
+        f.write(p32(len(real_filepath)))
+        f.write(real_filepath)
+
+        _type = fobj[1]
+        f.write(p8(_type))
+
+        _xattrs = fobj[2]
+        f.write(p32(len(_xattrs)))
+        for x in _xattrs:
+            f.write(p32(len(x[0])))
+            f.write(x[0])
+			# f.write(p32(len(x[1])))
+			# f.write(x[1])
+
+    f.close()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', dest='img')
+    parser.add_argument('-t', dest='type')
+    parser.add_argument('-o', dest='dest')
+
+    args = parser.parse_args()
+
+    if args.img is None or args.type is None or args.dest is None:
+        print 'ERROR'
+        sys.exit(1)
+
+    tmp_img = tempfile.NamedTemporaryFile(delete=False)
+    tmp_img_path = tmp_img.name
+    tmp_img.close()
+    print 'tmp image: %s' % tmp_img_path
+
+    shutil.copyfile(args.img, tmp_img_path)  
+
+    mnt_dir = tempfile.mkdtemp()
+    print 'mount dir: %s' % mnt_dir
+
+    mount(args.type, tmp_img_path, mnt_dir)
+    chown(mnt_dir)
+
+    stat(mnt_dir, args.dest)
+
+    os.unlink(tmp_img_path)
+    umount(mnt_dir)
+    os.rmdir(mnt_dir)
+
+    
+
+    

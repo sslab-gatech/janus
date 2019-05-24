@@ -1,0 +1,3 @@
+/ff-gcc
+/ff-gcc-kasan
+*.o

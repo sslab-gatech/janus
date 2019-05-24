@@ -1,0 +1,9 @@
+/input
+/temp
+*.o
+*.stat
+create_corpus
+image_test
+program_show
+sanity-check
+program_test

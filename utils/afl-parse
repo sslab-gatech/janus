@@ -1,0 +1,62 @@
+#!/usr/bin/python
+
+import argparse, os, shutil, subprocess, sys, tempfile
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', dest='img')
+    parser.add_argument('-t', dest='type')
+    parser.add_argument('-f', dest='testcase')
+    parser.add_argument('-o', dest='name')
+
+    args = parser.parse_args()
+
+    if args.img is None or args.type is None or args.testcase is None or args.name is None:
+        print 'ERROR'
+        sys.exit(1)
+
+    standalone = os.path.join('fs', args.type, '%s_standalone' % args.type)
+    program_show = os.path.join('core', 'program_show')
+    if not os.path.exists(args.img) or not os.path.exists(standalone) or not os.path.exists(args.testcase) or not os.path.exists(program_show):
+        print 'ERROR'
+        sys.exit(1)
+
+    fd, out_img = tempfile.mkstemp()
+    os.close(fd)
+
+    fd, meta_img = tempfile.mkstemp()
+    os.close(fd)
+
+    subprocess.check_call([standalone, 'test', args.img, out_img, meta_img])
+    st = os.stat(meta_img)
+    meta_size = st.st_size
+
+    os.unlink(out_img)
+    os.unlink(meta_img)
+
+    # fd, c_raw_file = tempfile.mkstemp()
+    # os.close(fd)
+
+    c_raw_file = '%s.c.raw' % args.name
+
+    f_in = open(args.testcase, 'rb')
+    meta = f_in.read(meta_size)
+    f_out = open('%s.img.meta' % args.name, 'wb')
+    f_out.write(meta)
+    f_out.close()
+
+    subprocess.check_call([standalone, 'repro', args.img, '%s.img' % args.name, '%s.img.meta' % args.name])
+    os.unlink('%s.img.meta' % args.name)
+
+    c_raw = f_in.read()
+    f_out = open(c_raw_file, 'wb')
+    f_out.write(c_raw)
+    f_out.close()
+
+    f_out = open('%s.c' % args.name, 'wb')
+    subprocess.check_call([program_show, c_raw_file], stdout=f_out)
+    f_out.close()
+    # os.unlink(c_raw_file)
+
+    f_in.close()
+
