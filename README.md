@@ -4,9 +4,10 @@ Janus: Fuzzing File Systems via Two-Dimensional Input Space Exploration
 ### Paper
 * [Fuzzing File Systems via Two-Dimensional Input Space Exploration (IEEE S&P 2019)](https://gts3.org/assets/papers/2019/xu:janus.pdf)
 
-### Usage 
-The currently released version supports fuzzing ext4, btrfs and F2FS. 
-Here we explain the usage of Janus by targeting btrfs.
+### Overview
+Janus is a file system fuzzer finding memory corruptions in in-kernel file systems on Linux. Janus is implemented as an AFL variant. As an OS fuzzer, its target is not traditional VMs but Linux Kernel Library (https://github.com/lkl). Janus has found around 100 unique crashes in mainstream file systems with 32 CVEs assigned so far.
+
+We currently release the image parsing support for ext4, btrfs and F2FS. Stay tuned for more extensions and the details of the found bugs. Here we explain the usage of Janus by fuzzing btrfs as an example.
 
 ### Tested Environment
 - OS: Ubuntu 16.04 LTS
@@ -85,3 +86,10 @@ Here we explain the usage of Janus by targeting btrfs.
     - If you only want to fuzz file operations (which are performed always on the same seed image):
         - ./core/afl-syscall/afl-fuzz -k -S btrfs -i prog -o output -m none -u 2 -- ./lkl/tools/lkl/btrfs-executor -t btrfs -i ./samples/evaluation/btrfs-00.image -p @@
         - Here the starting program folder is just the input directory
+
+### Contacts
+Wen Xu (wen.xu@gatech.edu)
+Hyungon Moon (hyungon@unist.ac.kr)
+Sanidhya Kashyap (sanidhya@gatech.edu)
+Po-Ning Tseng (poning@gatech.edu)
+Taesoo Kim (taesoo@gatech.edu)
