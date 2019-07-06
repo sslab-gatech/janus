@@ -13,8 +13,8 @@ Here we explain the usage of Janus by fuzzing btrfs as an example.
 
 ### Tested Environment
 - OS: Ubuntu 16.04 LTS
-- clang 6.0.0
-- gcc 5.0.0
+- clang 6.0.0 built from source
+- gcc 5.0.0 by default
 
 ### Preparation
 - Compile ff-gcc (for instrumentation)
