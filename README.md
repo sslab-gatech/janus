@@ -39,8 +39,7 @@ Here we explain the usage of Janus by fuzzing btrfs as an example.
     - Check fs/[fs name]/README.md for how to build in detail!
 
 - Seed images
-    - samples/evaluation        the seed images we used for evaluation in the paper 
-    - samples/fuzzing           some additional images that we use for finding bugs
+    - Check samples.zip for a few seed images to start
     - Let's assume we use samples/evaluation/btrfs-00.image here
         - Build the istat file for generating starting program 
             - cd istat
