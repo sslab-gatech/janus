@@ -5,6 +5,8 @@ Janus: Fuzzing File Systems via Two-Dimensional Input Space Exploration
 * [Fuzzing File Systems via Two-Dimensional Input Space Exploration (IEEE S&P 2019)](https://gts3.org/assets/papers/2019/xu:janus.pdf)
 
 ### Overview
+Please check our latest project [Hydra](https://github.com/sslab-gatech/hydra), which is published on SOSP19 and involves the latest version of Janus.
+
 Janus is a general file system fuzzer. Janus finds memory corruptions in in-kernel file systems on Linux by exploring the input space of both images and syscalls simultaneously in an efficient and effective manner. Janus is implemented as an AFL variant. As an OS fuzzer, its target is not traditional VMs but Linux Kernel Library (https://github.com/lkl). Janus has found around 100 unique crashes in mainstream file systems with 32 CVEs assigned so far.
 
 We currently release the image parsing support for ext4, btrfs and F2FS. Stay tuned for more extensions and the details of the found bugs! 
